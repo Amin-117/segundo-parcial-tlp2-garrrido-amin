@@ -1,13 +1,61 @@
+// TODO: Integrar lógica de registro aquí
+// TODO: Implementar useForm para el manejo del formulario
+// TODO: Implementar función handleSubmit
 import { Link } from "react-router";
+import { useState } from "react";
+import { Loading } from "../components/Loading";
+import { useForm } from "../hooks/useForm";
 
 export const RegisterPage = () => {
-  // TODO: Integrar lógica de registro aquí
-  // TODO: Implementar useForm para el manejo del formulario
-  // TODO: Implementar función handleSubmit
+  const { values, handleChange, handleReset } = useForm({
+    username: "",
+    password: "",
+    email: "",
+    name: "",
+    lastname: "",
+  });
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.prevenDefault();
+    setLoading(true);
+
+    const payload = {
+      name: values.firstname,
+      lastname: values.lastname,
+      username: values.username,
+      email: values.email,
+      password: values.password,
+    };
+
+    try {
+      const res = await fetch("http://localhost:3000/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+        credentials: "include",
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        onLoginsucess();
+      } else {
+        console.error(data.message, data.message);
+        handleReset();
+      }
+    } catch (error) {
+      console.error("error de la peticion del login", error);
+      handleReset();
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-8">
       <div className="max-w-lg w-full bg-white rounded-lg shadow-xl p-8">
+        {loading && <Loading />}
         <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">
           Crear Cuenta
         </h2>
@@ -19,7 +67,11 @@ export const RegisterPage = () => {
           </p>
         </div>
 
-        <form onSubmit={(event) => {}}>
+        <form
+          onSubmit={(event) => {
+            handleSubmit;
+          }}
+        >
           <div className="mb-4">
             <label
               htmlFor="username"
@@ -32,6 +84,9 @@ export const RegisterPage = () => {
               id="username"
               name="username"
               placeholder="Elige un nombre de usuario"
+              value={values.username}
+              onChange={handleChange}
+              disabled={loading}
               className="w-full border border-gray-300 rounded p-3 focus:outline-none focus:ring-2 focus:ring-green-500"
               required
             />
@@ -49,6 +104,9 @@ export const RegisterPage = () => {
               id="email"
               name="email"
               placeholder="tu@email.com"
+              value={values.email}
+              onChange={handleChange}
+              disabled={loading}
               className="w-full border border-gray-300 rounded p-3 focus:outline-none focus:ring-2 focus:ring-green-500"
               required
             />
@@ -66,6 +124,9 @@ export const RegisterPage = () => {
               id="password"
               name="password"
               placeholder="Crea una contraseña segura"
+              value={values.password}
+              onChange={handleChange}
+              disabled={loading}
               className="w-full border border-gray-300 rounded p-3 focus:outline-none focus:ring-2 focus:ring-green-500"
               required
             />
@@ -83,6 +144,9 @@ export const RegisterPage = () => {
               id="name"
               name="name"
               placeholder="Tu nombre"
+              value={values.firstname}
+              onChange={handleChange}
+              disabled={loading}
               className="w-full border border-gray-300 rounded p-3 focus:outline-none focus:ring-2 focus:ring-green-500"
               required
             />
@@ -100,6 +164,9 @@ export const RegisterPage = () => {
               id="lastname"
               name="lastname"
               placeholder="Tu apellido"
+              value={values.lastname}
+              onChange={handleChange}
+              disabled={loading}
               className="w-full border border-gray-300 rounded p-3 focus:outline-none focus:ring-2 focus:ring-green-500"
               required
             />
