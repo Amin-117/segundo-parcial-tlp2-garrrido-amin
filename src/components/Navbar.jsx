@@ -1,8 +1,23 @@
-export const Navbar = () => {
+import { Link } from "react-router";
+
+export const Navbar = ({ authStatus, onLogout }) => {
+  const isAuth = authStatus === "authenticated";
   // TODO: Obtener datos del usuario desde /api/profile
   // TODO: Implementar función handleLogout con POST a /api/logout usando credentials: 'include'
   // TODO: Después del logout exitoso, redireccionar a /login
   // TODO: Manejar errores apropiadamente
+  const handleLogoutClick = async () => {
+    try {
+      await fetch("http://localhost:3000/api/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+    } catch (error) {
+      console.error("error al cerrar sesion", error);
+    } finally {
+      onLogout();
+    }
+  };
 
   const userName = "Usuario"; // TODO: Reemplazar con el nombre real del usuario obtenido de /api/profile
 
@@ -19,7 +34,7 @@ export const Navbar = () => {
 
           <button
             onClick={() => {
-              // TODO: Implementar handleLogout aquí
+              handleLogoutClick;
             }}
             className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded transition-colors font-medium"
           >

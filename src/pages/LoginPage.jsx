@@ -1,9 +1,44 @@
+// TODO: Integrar lógica de autenticación aquí
+// TODO: Implementar useForm para el manejo del formulario
+// TODO: Implementar función handleSubmit
 import { Link } from "react-router";
+import { Loading } from "../components/Loading";
+import { useState } from "react";
+import { useForm } from "../hooks/useForm";
+export const LoginPage = ({ onLoginsucess }) => {
+  const { values, handleChange, handleReset } = useForm({
+    username: "",
+    password: "",
+  });
+  const [loading, setLoading] = useState(false);
 
-export const LoginPage = () => {
-  // TODO: Integrar lógica de autenticación aquí
-  // TODO: Implementar useForm para el manejo del formulario
-  // TODO: Implementar función handleSubmit
+  const handleSubmit = async (e) => {
+    e.prevenDefault();
+    setLoading(true);
+
+    try {
+      const res = await fetch("http://localhost:3000/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+        credentials: "include",
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        onLoginsucess();
+      } else {
+        alert(data.message || "credenciales invalidas");
+        handleReset();
+      }
+    } catch (error) {
+      console.error("error de la peticion del login", error);
+      handleReset();
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-8">
@@ -20,7 +55,11 @@ export const LoginPage = () => {
           </p>
         </div>
 
-        <form onSubmit={(event) => {}}>
+        <form
+          onSubmit={(event) => {
+            handleSubmit;
+          }}
+        >
           <div className="mb-4">
             <label
               htmlFor="username"
@@ -32,6 +71,8 @@ export const LoginPage = () => {
               type="text"
               id="username"
               name="username"
+              value={values.username}
+              onChange={handleChange}
               placeholder="Ingresa tu usuario"
               className="w-full border border-gray-300 rounded p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
@@ -49,6 +90,8 @@ export const LoginPage = () => {
               type="password"
               id="password"
               name="password"
+              value={values.password}
+              onChange={handleChange}
               placeholder="Ingresa tu contraseña"
               className="w-full border border-gray-300 rounded p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
