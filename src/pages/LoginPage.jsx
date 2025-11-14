@@ -56,11 +56,7 @@ export const LoginPage = ({ onLoginsucess }) => {
           </p>
         </div>
 
-        <form
-          onSubmit={(event) => {
-            handleSubmit;
-          }}
-        >
+        <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label
               htmlFor="username"
