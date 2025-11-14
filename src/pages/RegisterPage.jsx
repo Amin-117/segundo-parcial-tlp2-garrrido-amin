@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Loading } from "../components/Loading";
 import { useForm } from "../hooks/useForm";
 
-export const RegisterPage = () => {
+export const RegisterPage = ({ onLoginsucess }) => {
   const { values, handleChange, handleReset } = useForm({
     username: "",
     password: "",
@@ -37,11 +37,11 @@ export const RegisterPage = () => {
       });
 
       const data = await res.json();
-
+      console.log(data);
       if (res.ok) {
         onLoginsucess();
       } else {
-        console.error(data.message, data.message);
+        console.error(data.message);
         handleReset();
       }
     } catch (error) {
